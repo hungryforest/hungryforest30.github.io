@@ -293,7 +293,7 @@ section[id$="-sec"]{scroll-margin-top:72px}
 .favnav .cnt{font-size:12px;font-weight:700;background:#B3403A;color:#fff;border-radius:999px;padding:0 7px;line-height:19px}
 .feature-wrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;align-items:center}
 .feature-wrap .feature{display:block}
-.feature-wrap .thumb{aspect-ratio:3/2}
+.feature-wrap .thumb{aspect-ratio:16/10}
 .feature-wrap a.ft{text-decoration:none}
 .feature-wrap a.ft:hover h3{color:var(--moss)}
 
