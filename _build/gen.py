@@ -43,7 +43,7 @@ def iso(ms):
     return datetime.datetime.fromtimestamp(ms / 1000, datetime.timezone(datetime.timedelta(hours=8))).isoformat()
 
 def plain(md):
-    s = re.sub(r'!\[[^\]]*\]\([^)]*\)', '', md or '')
+    s = re.sub(r'!v?\[[^\]]*\]\([^)]*\)', '', md or '')
     s = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', s)
     s = re.sub(r'[#>*_`-]+', ' ', s)
     return re.sub(r'\s+', ' ', s).strip()
@@ -57,6 +57,24 @@ def read_min(p): return max(1, round(len(plain(p.get('body'))) / 450))
 def src(ref, pre):
     if not ref: return ''
     if ref.startswith('f:img/'): return pre + ref[2:]
+    return ''
+
+def vid_src(ref, pre):
+    # backend video asset:<id> -> vid/<id>.mp4 (file committed in the repo's vid/ folder)
+    if ref.startswith('asset:'): f = ref[6:] + '.mp4'
+    elif ref.startswith('f:vid/'): f = ref[6:]
+    else: return ''
+    return pre + 'vid/' + f if os.path.isfile(os.path.join(OUT, 'vid', f)) else ''
+def yt_id(u):
+    m = re.search(r'(?:youtube\.com/(?:watch\?(?:[^#]*&)?v=|shorts/|embed/|live/)|youtu\.be/)([A-Za-z0-9_-]{6,15})', u)
+    return m.group(1) if m else ''
+def video_html(ref, cap, pre):
+    fc = f'<figcaption>{esc(cap)}</figcaption>' if cap.strip() else ''
+    u = vid_src(ref, pre)
+    if u: return f'<figure><video controls playsinline preload="metadata" src="{u}"></video>{fc}</figure>'
+    y = yt_id(ref) if ref.startswith('https://') else ''
+    if y: return f'<figure><div class="yt"><iframe src="https://www.youtube-nocookie.com/embed/{y}" title="{esc(cap or "YouTube 影片")}" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>{fc}</figure>'
+    if ref.startswith('https://'): return f'<p><a href="{esc(ref)}" target="_blank" rel="noopener">{esc(cap or "觀看影片")}</a></p>'
     return ''
 
 # ---------- markdown (mirror of the blog's renderer) ----------
@@ -99,6 +117,8 @@ def md(text, pre):
             fp(); fq()
             if not lst or lst[0] != 'ol': fl(); lst = ['ol', []]
             lst[1].append(m.group(1)); continue
+        m = re.match(r'^!v\[([^\]]*)\]\((asset:[A-Za-z0-9_\-.~:@+]+|f:vid/[A-Za-z0-9_\-.]+|https://[^\s)]+)\)$', l.strip())
+        if m: flush(); out.append(video_html(m.group(2), m.group(1), pre)); continue
         m = re.match(r'^!\[([^\]]*)\]\((f:img/[a-z0-9]+\.jpg)\)$', l.strip())
         if m:
             flush(); u = src(m.group(2), pre)
@@ -160,6 +180,9 @@ var qi=document.getElementById('q');if(qi)qi.oninput=function(){q=qi.value.trim(
 </script>"""
 
 EXTRA_CSS = """
+.prose video{width:100%;max-height:78vh;border-radius:14px;background:#000;display:block}
+.prose .yt{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000}
+.prose .yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .card[hidden]{display:none!important}
 .prose figure img{max-width:100%;max-height:min(80vh,820px);width:auto;height:auto;margin:0 auto;display:block}
 .post .cover img{max-height:70vh;width:auto;margin:0 auto}
