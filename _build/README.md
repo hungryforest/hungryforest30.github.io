@@ -5,5 +5,5 @@
   `python3 _build/gen.py . https://網址`
 - 圖片引用格式：`f:img/<名稱>.jpg`（後台用 `asset:<id>` 上傳的新圖要先下載轉成 img/ 檔案）
 - 其他資料：`data/authors.json`（後台 authors 集合）、site.json 內的 avatar（Logo）、usBody（關於我們）、authorsTitle/authorsSub
-- 分享預覽圖：`share/og-image.jpg`（文章有封面就用封面）
+- 分享預覽圖：`share/og-logo.jpg`（森林背景＋圓形 Logo；文章有封面就用封面）
 - 新頁面：about/（關於我們）、authors/（小編是誰）、favorites/（我的最愛，收藏存在讀者瀏覽器）

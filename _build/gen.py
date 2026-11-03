@@ -224,7 +224,7 @@ EXTRA_CSS = """
 """
 
 def page(title, desc, body, pre, canonical, image='', jsonld=None, active='', noindex=False):
-    og_img = BASE + '/' + (image or 'share/og-image.jpg')
+    og_img = BASE + '/' + (image or 'share/og-logo.jpg')
     ld = f'<script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False)}</script>' if jsonld else ''
     groups = json.dumps({k: keys_under(k) for k in TOP}, ensure_ascii=False)
     return f'''<!DOCTYPE html>
@@ -240,7 +240,7 @@ def page(title, desc, body, pre, canonical, image='', jsonld=None, active='', no
 <meta property="og:description" content="{esc(desc)}">
 <meta property="og:url" content="{esc(canonical)}">
 <meta property="og:site_name" content="{esc(NAME)}">
-{f'<meta property="og:image" content="{esc(og_img)}">' if og_img else ''}
+{f'<meta property="og:image" content="{esc(og_img)}">' if og_img else ''}{'' if image else chr(10) + '<meta property="og:image:width" content="1200">' + chr(10) + '<meta property="og:image:height" content="630">'}
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
