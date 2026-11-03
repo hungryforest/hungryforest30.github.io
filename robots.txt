@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hungryforest.github.io/hungryforest30.github.io/sitemap.xml
